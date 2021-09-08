@@ -1,9 +1,22 @@
-import os
 import shutil
 from PIL import Image
 from pathlib import Path
 
 file_suffixes = ('.png', '.jpg', '.jpeg')
+
+print("Enter working directory[0] or Choose current directory[1]: ")
+user_input = input()
+while user_input!=0 and user_input!=1:
+    print("Enter valid input")
+    user_input = input()
+
+if (user_input == '0'):
+    print('Enter directory: ')
+    directory = input()
+elif (user_input == '1'):
+    directory = 'current'
+
+print(directory)
 
 working_directory = Path.cwd() / 'testdir'
 categories = {'mobile':(0.2, 1.5), 'desktop':(1.5,1.8)}
@@ -25,6 +38,4 @@ def main():
                     if values[0]<= ratio < values[1]:
                         destination = working_directory / category / file.name
                         shutil.copy(file, destination)
-                        print(destination)
 
-main()
