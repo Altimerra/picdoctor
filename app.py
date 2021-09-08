@@ -24,12 +24,7 @@ def main():
                     values = categories[category]
                     if values[0]<= ratio < values[1]:
                         destination = working_directory / category / file.name
+                        shutil.copy(file, destination)
                         print(destination)
-                #print(ratio)
-                #print(file)
-        #path_to_file = os.path.join(working_directory, file)
-        #if os.path.isfile(path_to_file)
-        #if file.lower().endswith(formats):
-            #print(file)
 
 main()
