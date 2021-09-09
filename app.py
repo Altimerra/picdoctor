@@ -29,16 +29,13 @@ def ui():
 
     print("Proceed with these settings: Directory: " + directory + ", categories: " + str(default_categories) + "?") # Edit this later
 
-working_directory = Path.cwd()
+
 categories = {'tall': (0.0,0.4),'mobile':(0.4, 0.76), 'square':(0.76,1.3), 'desktop':(1.3,2.0), 'wide': (2.0,50)}
+resolutions = {'sd': (720,1080), 'hd': (1080,1440), 'fhd': (1440,2160), 'uhd': (2160,5000)}
 
-def group_by_aspect_ratio():
-    for category in categories:
-        path_to_create = working_directory / category
-        if not path_to_create.exists():
-            path_to_create.mkdir(parents=True)
+def group_by_aspect_ratio(folders: dict, file_list: Path.glob, working_dir: Path):
+    create_folders(working_dir, folders)
 
-    file_list = working_directory.iterdir()
     for file in file_list: # 'file' is the full file path of a file
         if file.is_file():
             if file.suffix in file_suffixes:
@@ -47,7 +44,7 @@ def group_by_aspect_ratio():
                 for category in categories:
                     values = categories[category]
                     if values[0]<= ratio < values[1]:
-                        destination = working_directory / category / file.name
+                        destination = working_dir / category / file.name
                         shutil.copy(file, destination)
 
 
@@ -58,6 +55,31 @@ def verified_input(*options):
         user_input = input()
     return user_input
 
+def group_by_resolution(folders: dict, file_list: Path.glob, working_dir: Path):
+    create_folders(working_dir, folders)
+
+    for file in file_list: # 'file' is the full file path of a file
+        if file.is_file():
+            if file.suffix in file_suffixes:
+                img = Image.open(file)
+                size = min(img.size[0], img.size[1])
+                for resolution in resolutions:
+                    values = resolutions[resolution]
+                    if values[0] <= size < values[1]:
+                        destination = working_dir / resolution / file.name
+                        shutil.copy(file, destination)
+
+def walk_directory(path: Path):
+    file_list = path.glob('**/*')
+    return file_list
+
+def create_folders(path: Path, folder_list):
+    for folder in folder_list:
+        path_to_create = path / folder
+        if not path_to_create.exists():
+            path_to_create.mkdir(parents=True)
+
 
 #ui()
-group_by_aspect_ratio()
+#group_by_aspect_ratio()
+group_by_resolution(resolutions, walk_directory(Path("./sort")), Path.cwd())
