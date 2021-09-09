@@ -31,7 +31,7 @@ def ui():
 
 
 categories = {'tall': (0.0,0.4),'mobile':(0.4, 0.76), 'square':(0.76,1.3), 'desktop':(1.3,2.0), 'wide': (2.0,50)}
-resolutions = {'sd': (720,1080), 'hd': (1080,1440), 'fhd': (1440,2160), 'uhd': (2160,5000)}
+resolutions = {'low':(0,720),'sd': (720,1080), 'hd': (1080,1440), 'fhd': (1440,2160), 'uhd': (2160,4320), '8k': (4320,10000)}
 
 def group_by_aspect_ratio(folders: dict, file_list: Path.glob, working_dir: Path):
     create_folders(working_dir, folders)
@@ -45,7 +45,7 @@ def group_by_aspect_ratio(folders: dict, file_list: Path.glob, working_dir: Path
                     values = folders[folder]
                     if values[0]<= ratio < values[1]:
                         destination = working_dir / folder / file.name
-                        shutil.copy(file, destination)
+                        shutil.move(file, destination)
 
 
 def verified_input(*options):
@@ -67,13 +67,13 @@ def group_by_resolution(folders: dict, file_list: Path.glob, working_dir: Path):
                     values = folders[folder]
                     if values[0] <= size < values[1]:
                         destination = working_dir / folder / file.name
-                        shutil.copy(file, destination)
+                        shutil.move(file, destination)
 
 def walk_directory(path: Path):
     file_list = path.glob('**/*')
     return file_list
 
-def create_folders(path: Path, folder_list):
+def create_folders(path: Path, folder_list: dict):
     for folder in folder_list:
         path_to_create = path / folder
         if not path_to_create.exists():
@@ -82,4 +82,10 @@ def create_folders(path: Path, folder_list):
 
 #ui()
 #group_by_aspect_ratio()
-group_by_resolution(resolutions, walk_directory(Path("./sort")), Path.cwd())
+cwd = Path.cwd()
+create_folders(cwd, {'sort': 0} )
+group_by_aspect_ratio(categories, walk_directory(cwd / 'sort'), cwd)
+
+for category in categories:
+    current_path = cwd / category
+    group_by_resolution(resolutions, walk_directory(current_path), current_path)
