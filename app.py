@@ -4,24 +4,35 @@ from pathlib import Path
 
 file_suffixes = ('.png', '.jpg', '.jpeg')
 
-print("Enter working directory[0] or Choose current directory[1]: ")
-user_input = input()
-while user_input!=0 and user_input!=1:
-    print("Enter valid input")
-    user_input = input()
+def ui():
+    print("(Only default options work)")
+    print("Enter working directory[0] or Choose current directory[1]", end=":")
+    user_input = verified_input('0', '1') # Throws error when letters are input
+    
+    if (user_input == 0):
+        print('Enter directory: ') # Run regexp to check directory
+        directory = input()
+    elif (user_input == 1):
+        directory = 'current'
+    else:
+        exit()
+    
+    print("Enter custom categories[0] or use default[1]: ")
+    user_input = verified_input('0', '1')
+    
+    if (user_input == 0):
+        default_categories = False
+    elif (user_input == 1):
+        default_categories = True
+    else:
+        exit()
 
-if (user_input == '0'):
-    print('Enter directory: ')
-    directory = input()
-elif (user_input == '1'):
-    directory = 'current'
+    print("Proceed with these settings: Directory: " + directory + ", categories: " + str(default_categories) + "?") # Edit this later
 
-print(directory)
+working_directory = Path.cwd()
+categories = {'tall': (0.0,0.4),'mobile':(0.4, 0.76), 'square':(0.76,1.3), 'desktop':(1.3,2.0), 'wide': (2.0,50)}
 
-working_directory = Path.cwd() / 'testdir'
-categories = {'mobile':(0.2, 1.5), 'desktop':(1.5,1.8)}
-
-def main():
+def group_by_aspect_ratio():
     for category in categories:
         path_to_create = working_directory / category
         if not path_to_create.exists():
@@ -39,3 +50,14 @@ def main():
                         destination = working_directory / category / file.name
                         shutil.copy(file, destination)
 
+
+def verified_input(*options):
+    user_input = input()
+    while user_input not in options:
+        print("Enter valid input")
+        user_input = input()
+    return user_input
+
+
+#ui()
+group_by_aspect_ratio()
