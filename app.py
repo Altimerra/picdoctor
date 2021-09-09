@@ -41,10 +41,10 @@ def group_by_aspect_ratio(folders: dict, file_list: Path.glob, working_dir: Path
             if file.suffix in file_suffixes:
                 img = Image.open(file)
                 ratio = img.size[0]/img.size[1]
-                for category in categories:
-                    values = categories[category]
+                for folder in folders:
+                    values = folders[folder]
                     if values[0]<= ratio < values[1]:
-                        destination = working_dir / category / file.name
+                        destination = working_dir / folder / file.name
                         shutil.copy(file, destination)
 
 
@@ -63,10 +63,10 @@ def group_by_resolution(folders: dict, file_list: Path.glob, working_dir: Path):
             if file.suffix in file_suffixes:
                 img = Image.open(file)
                 size = min(img.size[0], img.size[1])
-                for resolution in resolutions:
-                    values = resolutions[resolution]
+                for folder in folders:
+                    values = folders[folder]
                     if values[0] <= size < values[1]:
-                        destination = working_dir / resolution / file.name
+                        destination = working_dir / folder / file.name
                         shutil.copy(file, destination)
 
 def walk_directory(path: Path):
