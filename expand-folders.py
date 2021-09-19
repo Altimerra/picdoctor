@@ -13,15 +13,14 @@ def walk_directory(path: Path):
 
 
 cwd = Path.cwd()
-create_folders(cwd, {'expanded': 0})
+create_folders(cwd, {'expand':0, 'expanded': 0})
 expanded = cwd / 'expanded'
+expand = cwd / 'expand'
 
-file_list = walk_directory(cwd)
+file_list = walk_directory(expand)
 
 for file in file_list:
-    if file.is_file() and file.name != 'expand-folders.py':
-        if not Path.exists(expanded / file.name):
-            if not file.samefile(expanded / file.name):
-                shutil.move(file, expanded / file.name)
+    if file.is_file():
+        shutil.move(file, expanded / file.name)
 
 # Rethink your life choices
